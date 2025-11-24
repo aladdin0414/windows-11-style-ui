@@ -41,25 +41,25 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, onOpenApp
       </div>
 
       {/* Pinned Section */}
-      <div className="flex-1 px-6 py-4 overflow-y-auto">
+      <div className="flex-1 px-8 py-4 overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100 ml-2">Pinned</h3>
-            <button className="flex items-center px-2 py-1 text-xs text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 rounded shadow-sm border border-slate-200 dark:border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">Pinned</h3>
+            <button className="flex items-center px-2 py-1 text-xs text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 rounded shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                 All apps <ChevronRight className="w-3 h-3 ml-1" />
             </button>
         </div>
         
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-6 gap-y-6 gap-x-2">
             {filteredApps.map((app) => (
                 <button 
                     key={app.id}
                     onClick={() => { onOpenApp(app.id); onClose(); }}
-                    className="flex flex-col items-center justify-center p-2 rounded hover:bg-white/50 dark:hover:bg-white/10 transition-colors group aspect-square"
+                    className="flex flex-col items-center justify-start p-2 rounded hover:bg-white/50 dark:hover:bg-white/5 transition-colors group aspect-[1/1.1]"
                 >
-                    <div className="w-8 h-8 mb-2 transform group-hover:scale-110 transition-transform duration-200">
+                    <div className="w-8 h-8 mb-2">
                         {app.icon}
                     </div>
-                    <span className="text-xs text-center text-slate-700 dark:text-slate-200 truncate w-full">{app.title}</span>
+                    <span className="text-[11px] text-center text-slate-700 dark:text-slate-200 font-medium truncate w-full">{app.title}</span>
                 </button>
             ))}
         </div>
@@ -69,13 +69,13 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, onOpenApp
              <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100 ml-2 mb-4">Recommended</h3>
              <div className="grid grid-cols-2 gap-4">
                  {[1, 2, 3, 4].map((i) => (
-                     <div key={i} className="flex items-center p-2 rounded hover:bg-white/50 dark:hover:bg-white/10 transition-colors cursor-pointer">
-                         <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded flex items-center justify-center mr-3">
+                     <div key={i} className="flex items-center p-2 rounded hover:bg-white/50 dark:hover:bg-white/5 transition-colors cursor-pointer group">
+                         <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/30 rounded flex items-center justify-center mr-3 border border-blue-100 dark:border-blue-800 group-hover:bg-blue-100 dark:group-hover:bg-blue-800 transition-colors">
                              <StickyNote className="w-4 h-4 text-blue-600 dark:text-blue-300" />
                          </div>
                          <div className="flex flex-col">
-                             <span className="text-xs font-medium text-slate-800 dark:text-slate-200">Document_{i}.txt</span>
-                             <span className="text-[10px] text-slate-500">Recently opened</span>
+                             <span className="text-xs font-medium text-slate-800 dark:text-slate-200">Project_Plan_{i}.txt</span>
+                             <span className="text-[10px] text-slate-500">1{i} min ago</span>
                          </div>
                      </div>
                  ))}
@@ -84,9 +84,9 @@ export const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, onOpenApp
       </div>
 
       {/* Footer */}
-      <div className="h-16 bg-slate-100/50 dark:bg-[#181818]/95 border-t border-slate-200 dark:border-slate-700 px-12 flex items-center justify-between">
+      <div className="h-16 bg-slate-100/50 dark:bg-[#181818]/95 border-t border-slate-200 dark:border-slate-700 px-12 flex items-center justify-between backdrop-blur-md">
           <div className="flex items-center space-x-3 hover:bg-white/50 dark:hover:bg-white/10 p-2 rounded-lg cursor-pointer transition-colors">
-              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
+              <div className="w-8 h-8 bg-gradient-to-tr from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm">
                   <User className="w-5 h-5" />
               </div>
               <span className="text-sm text-slate-700 dark:text-slate-200 font-medium">Guest User</span>

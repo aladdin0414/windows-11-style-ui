@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Wifi, Volume2, Battery, ChevronUp } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Wifi, Volume2, Battery, ChevronUp, Power, Settings, Activity } from 'lucide-react';
 import { AppID, WindowState } from '../types';
 import { APP_CONFIGS } from '../constants';
 
@@ -9,16 +9,25 @@ interface TaskbarProps {
   isStartOpen: boolean;
   toggleStart: () => void;
   onAppClick: (id: AppID) => void;
+  onLogout: () => void;
 }
 
 export const Taskbar: React.FC<TaskbarProps> = ({ 
-  windows, activeWindowId, isStartOpen, toggleStart, onAppClick 
+  windows, activeWindowId, isStartOpen, toggleStart, onAppClick, onLogout
 }) => {
   const [time, setTime] = useState(new Date());
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const startButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+      const handleClickOutside = () => setContextMenuOpen(false);
+      window.addEventListener('click', handleClickOutside);
+      return () => window.removeEventListener('click', handleClickOutside);
   }, []);
 
   const formatTime = (date: Date) => {
@@ -29,8 +38,13 @@ export const Taskbar: React.FC<TaskbarProps> = ({
     return date.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' });
   };
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+      e.preventDefault();
+      setContextMenuOpen(true);
+  };
+
   // Pinned apps + open apps
-  const pinnedApps = [AppID.AI_ASSISTANT, AppID.SETTINGS, AppID.NOTEPAD, AppID.CALCULATOR, AppID.VSCODE];
+  const pinnedApps = [AppID.AI_ASSISTANT, AppID.PAINT, AppID.SETTINGS, AppID.NOTEPAD, AppID.CALCULATOR, AppID.VSCODE];
   // Deduplicate: If an app is pinned, show it. If it's open but not pinned, show it too.
   const appIds = Array.from(new Set([...pinnedApps, ...Object.keys(windows) as AppID[]]));
 
@@ -40,16 +54,42 @@ export const Taskbar: React.FC<TaskbarProps> = ({
       <div className="flex-1"></div>
 
       {/* Center Icons */}
-      <div className="flex items-center space-x-1 h-full">
-        {/* Start Button */}
-        <button 
-            onClick={toggleStart}
-            className={`p-2 rounded hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-200 active:scale-95 ${isStartOpen ? 'bg-white/40 dark:bg-white/10' : ''}`}
-        >
-            <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
-                <path d="M4 4h7v7H4V4zm8 0h8v7h-8V4zM4 12h7v8H4v-8zm8 0h8v8h-8v-8z" className="text-blue-500" />
-            </svg>
-        </button>
+      <div className="flex items-center space-x-1 h-full relative">
+        {/* Start Button & Context Menu */}
+        <div className="relative">
+            <button 
+                ref={startButtonRef}
+                onClick={toggleStart}
+                onContextMenu={handleContextMenu}
+                className={`p-2 rounded hover:bg-white/40 dark:hover:bg-white/10 transition-all duration-200 active:scale-95 ${isStartOpen || contextMenuOpen ? 'bg-white/40 dark:bg-white/10' : ''}`}
+            >
+                <svg viewBox="0 0 24 24" className="w-6 h-6" fill="currentColor">
+                    <path d="M4 4h7v7H4V4zm8 0h8v7h-8V4zM4 12h7v8H4v-8zm8 0h8v8h-8v-8z" className="text-blue-500" />
+                </svg>
+            </button>
+            
+            {/* Context Menu */}
+            {contextMenuOpen && (
+                 <div className="absolute bottom-12 left-0 w-56 bg-[#f9f9f9]/95 dark:bg-[#2c2c2c]/95 backdrop-blur-xl border border-slate-300 dark:border-slate-600 rounded-lg shadow-xl py-1.5 z-[2000] text-slate-800 dark:text-slate-100 text-xs animate-in fade-in slide-in-from-bottom-2 duration-100 origin-bottom-left">
+                    <div className="px-3 py-2.5 hover:bg-slate-200 dark:hover:bg-white/10 cursor-pointer flex items-center gap-3">
+                         <Settings className="w-4 h-4 text-slate-500" />
+                         <span>Taskbar settings</span>
+                    </div>
+                    <div className="px-3 py-2.5 hover:bg-slate-200 dark:hover:bg-white/10 cursor-pointer flex items-center gap-3">
+                         <Activity className="w-4 h-4 text-slate-500" />
+                         <span>Task Manager</span>
+                    </div>
+                    <div className="h-[1px] bg-slate-200 dark:bg-slate-600 my-1 mx-0"></div>
+                    <div 
+                        className="px-3 py-2.5 hover:bg-red-100 dark:hover:bg-red-900/30 cursor-pointer flex items-center gap-3 text-red-600 dark:text-red-400"
+                        onClick={(e) => { e.stopPropagation(); onLogout(); }}
+                    >
+                         <Power className="w-4 h-4" />
+                         <span>Sign out</span>
+                    </div>
+                 </div>
+            )}
+        </div>
 
         {appIds.map((appId) => {
            const isOpen = windows[appId]?.isOpen;

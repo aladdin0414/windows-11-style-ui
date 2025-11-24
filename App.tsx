@@ -4,10 +4,12 @@ import { StartMenu } from './components/StartMenu';
 import { DesktopIcon } from './components/DesktopIcon';
 import { Window } from './components/Window';
 import { Settings } from './components/apps/Settings';
+import { LoginScreen } from './components/LoginScreen';
 import { AppID, WindowState } from './types';
 import { APP_CONFIGS, INITIAL_WALLPAPER } from './constants';
 
 const App: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [windows, setWindows] = useState<Record<string, WindowState>>({});
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
   const [maxZIndex, setMaxZIndex] = useState(10);
@@ -16,6 +18,16 @@ const App: React.FC = () => {
   const [isDark, setIsDark] = useState(true);
 
   const toggleTheme = () => setIsDark(!isDark);
+
+  const handleLogin = () => {
+      setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+      setIsLoggedIn(false);
+      setWindows({});
+      setIsStartOpen(false);
+  };
 
   const openApp = useCallback((appId: AppID) => {
     setWindows((prev) => {
@@ -136,6 +148,10 @@ const App: React.FC = () => {
       }
   };
 
+  if (!isLoggedIn) {
+      return <LoginScreen onLogin={handleLogin} wallpaper={wallpaper} />;
+  }
+
   return (
     <div 
         className={`relative w-full h-full overflow-hidden bg-cover bg-center bg-no-repeat selection:bg-blue-500/30 ${isDark ? 'dark' : ''}`}
@@ -177,6 +193,7 @@ const App: React.FC = () => {
         isStartOpen={isStartOpen}
         toggleStart={toggleStart}
         onAppClick={handleTaskbarAppClick}
+        onLogout={handleLogout}
       />
     </div>
   );

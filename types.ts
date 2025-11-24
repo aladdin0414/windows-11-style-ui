@@ -7,7 +7,8 @@ export enum AppID {
   SETTINGS = 'settings',
   VSCODE = 'vscode',
   SPOTIFY = 'spotify',
-  MY_COMPUTER = 'my_computer'
+  MY_COMPUTER = 'my_computer',
+  PAINT = 'paint'
 }
 
 export interface WindowState {
