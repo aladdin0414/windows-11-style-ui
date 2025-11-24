@@ -1,0 +1,7 @@
+{
+  "name": "Win11 WebOS",
+  "description": "A fully functional Windows 11 style web desktop featuring a Gemini-powered AI Assistant, window management, and utilities.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
